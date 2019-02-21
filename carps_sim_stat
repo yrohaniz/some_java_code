@@ -1,0 +1,163 @@
+/*------------------------------------------------------------*/
+/*  Dice Simulation                                           */
+/*                                                            */
+/*  This program uses the basic Craps game playing code       */
+/*  and runs a simulation of a hundred games and gathers      */
+/*  some statistics from the simulation. The number of wins   */
+/*  and losses produced after 1 roll, 2 rolls, 3 rolls, etc.  */
+/*  is computed using arrays.                                 */
+/*------------------------------------------------------------*/
+
+import java.util.*;
+
+public class CrapSimStats_a {
+
+//Declaration of some public static variables with their specific types                 //
+  final static int win=0; 
+  final static int loss=1;
+  final static int rollagain=2;
+    
+  static int rolls;
+
+//Main static method that runs the Craps game a hundred times and gathers statistics   //  
+  public static void main(String[] args) {
+  
+//  Declaration of the statistics variables with their specific types and initialize   //  
+    int nbrgames=100;
+    int result;
+    int totwins=0;
+    int totrolls=0;
+    int maxrolls=0;
+    int over30=0;
+    int maxwinseq=0;
+    int winseq=0;
+    int maxlossseq=0;
+    int lossseq=0;
+	 int[] winsarray;
+	 int[] lossesarray;
+	 int rollslimit;
+	 Scanner kbd=new Scanner(System.in);
+
+//  Ask the user to input the rolls limit and determint the arrays' size                //	 
+	 System.out.print("Please specify the maximum number of rolls in a game: ");
+	 rollslimit=kbd.nextInt();
+	 winsarray=new int[rollslimit];
+	 lossesarray=new int[rollslimit];
+
+//  Play games by calling playCraps(boolean printit) method and gather statistics       //    
+    for (int i=1; i<=nbrgames; i++) {
+      result=playCraps(false);
+
+//    Sum the number of rolls                                                           //		
+      totrolls=totrolls+rolls;
+
+//  Initialize an if statement to count games with over 30 rolls                        //		
+      if (rolls>30)
+        over30++;
+
+//  Initialize an if statement to determine the max number of rolls	                   //		  
+      if (rolls>maxrolls)
+        maxrolls=rolls;
+
+//  Determine the maximum wins or losses in a row 	                                     //
+      if (result==win) {
+        totwins++;
+        winseq++;
+		  
+        if (lossseq>maxlossseq) {
+          maxlossseq=lossseq;
+        }
+        lossseq=0;
+      } 
+      else {
+        lossseq++;
+        if (winseq>maxwinseq) {
+          maxwinseq=winseq;
+        }
+        winseq=0;
+      }
+
+//    Count the wins or losses for 1 roll, 2 rolls, etc. using arrays                   //		
+		if (result==win) {
+		  winsarray[rolls-1]++;
+		}
+		else {
+		  lossesarray[rolls-1]++;
+	   }  
+    }        
+    
+	 if (winseq>maxwinseq)  //in case last sequence is highest
+       maxwinseq=winseq;  
+    else if (lossseq>maxlossseq)
+       maxlossseq=lossseq;
+
+//  Print the results of the statistics investigation of the simulation                 //
+    System.out.printf("\n\nAvg # rolls: %7.3f\n",(double)totrolls/nbrgames);
+    System.out.printf("Max # rolls: %d\n",maxrolls);
+    System.out.printf("Over 30 rolls: %d\n",over30);
+    System.out.printf("# of wins: %d\n",totwins);
+    System.out.printf("# of losses: %d\n",nbrgames-totwins);
+    System.out.printf("Prob. win: %8.4f\n",(double)totwins/nbrgames);
+    System.out.printf("Max wins in a row was %d\n",maxwinseq); 
+    System.out.printf("Max losses in a row was %d\n",maxlossseq);
+	 for (int i=0; i<rollslimit; i++) {
+	   if (winsarray[i]!=0 || lossesarray[i]!=0)
+		  System.out.printf("Rolls: %d Wins:%d Losses:%d\n", i+1, winsarray[i], lossesarray[i]);
+	 }	  
+  }
+
+//playCraps() static method which returns the gameStatus as its final value             //
+  static int playCraps(boolean printit){
+    
+//  Declaration of the variables with their specific types to simulate the Craps game   //	 
+	 int myPoint;
+    int gameStatus = rollagain;
+    int d1,d2;
+
+//  Initialize the variable assignment statements                                       //    
+    rolls=1;
+//  Assign values to d1 and d2 by calling the rollDice() method                         //
+    d1 = rollDice();
+    d2 = rollDice();
+    if (printit)
+      System.out.printf("%d and %d\n",d1,d2);
+
+//  Initialize a switch statement to investigate different outcomes of dice rolling     //   
+	 switch ( d1+d2 ) {
+      case 7: 
+      case 11:
+        gameStatus = win;
+        break;
+      case 2: 
+      case 3: 
+      case 12:
+        gameStatus = loss;
+        break;
+      default:
+        myPoint = d1+d2;
+        if (printit)
+          System.out.printf("The point to make is %d\n",d1+d2);
+        do {
+          d1=rollDice();
+          d2=rollDice();
+          if (printit)
+            System.out.printf("%d and %d\n",d1,d2);
+          rolls++;
+          if ( d1+d2 == myPoint )
+            gameStatus = win;
+          else if ( d1+d2 == 7 )
+            gameStatus = loss;
+        } while (gameStatus == rollagain);
+    } // end of switch
+    
+    if (printit)
+      System.out.printf("It took %d rolls\n",rolls);
+    return gameStatus;
+  }
+
+//rollDice static method that returns the dice values by randomly generating numbers    //
+  static int rollDice(){
+    return (int)(6*Math.random())+1;
+  }
+
+}
