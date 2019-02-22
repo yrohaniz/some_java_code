@@ -1,0 +1,74 @@
+/*------------------------------------------------------------*/
+/*  How Random is Random?                                     */
+/*  Yousef Rohanizadegan                                      */
+/*                                                            */
+/*  This program generates random integers from 1 to n        */
+/*  and counts how often each integer is generated. In order  */
+/*  to do so the program asks the user to type in n and then  */
+/*  how many random integers from 1 to n are to be generated. */
+/*------------------------------------------------------------*/
+
+import java.util.*;
+
+public class RandomNumbers_a {
+
+//  main method                                                                        //	 
+    public static void main(String[] args) {
+
+//      Declaration of variables with their specific types                             //	     
+		  Scanner kbd = new Scanner(System.in);
+		  int n; 
+		  int trial;
+		  int line;
+		  int j = 0;
+		  int[] randomarray; 
+
+//      Prompt the user to type in the # of integers and trials                        //		  
+		  System.out.print("Please enter # of integers: ");
+		  n = kbd.nextInt();
+		  randomarray = new int[n];
+		  System.out.println();
+		  System.out.print("Please enter # of trials: ");
+		  trial = kbd.nextInt();
+		  System.out.println();
+
+//      Generate and save the random number occurances using Random_generator          //		  		  
+		  for (int i = 1; i <= trial; i++) {
+		      randomarray[Random_generator(n) - 1]++;
+		  }
+	
+//      Print the results with the specified format                                    //		  
+		  while (j < n) {
+		      System.out.print(randomarray[j] + "\t");
+				j++;
+
+//          Initialize an if statement to go to the next line after 10 enteries        //			   
+				if (j % 10 == 0){
+			       System.out.printf("<-- frequency of numbers %2d to %d\n", j - 9, j);
+				}	 
+		  }
+
+/*      Initialize an if statement to investegate the number of integers in a line     
+        to properly format the output                                                  */		  
+		  if (j < 10) {	 
+		      System.out.printf("<-- frequency of numbers %2d to %d\n", 1, j);
+		  }
+		  else if (j > 10 && j % 10 != 0) {
+//          Add spaces in the last line if needed                                      //		      
+				for (int i = 1; i <= (10 - (j % 10)) * 8 ; i++) {
+				    System.out.printf("%s", " ");
+				}	  
+		      System.out.printf("%s %2d to %d\n", "<-- frequency of numbers", (n / 10) * 10 + 1, j);
+		  }					
+		  System.out.println();  
+    }
+	
+//  Random_generator static method which returns a random number between 1 and n       //	 
+	 public static int Random_generator(int input) {
+
+//      Declaration of variables                                                       //	    
+		  Random rand = new Random();
+		  
+		  return rand.nextInt(input) + 1;
+    }	
+}	  		
